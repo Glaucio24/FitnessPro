@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FitnessPro.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231201222727_RemoveIdsFitnessClass")]
-    partial class RemoveIdsFitnessClass
+    [Migration("20231204185715_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -103,6 +103,9 @@ namespace FitnessPro.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<int>("FitnessClassId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("FitnessUserId")
                         .IsRequired()
@@ -319,12 +322,10 @@ namespace FitnessPro.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
@@ -361,12 +362,10 @@ namespace FitnessPro.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
                         .HasColumnType("text");
@@ -420,9 +419,9 @@ namespace FitnessPro.Migrations
             modelBuilder.Entity("FitnessPro.Models.FitnessClass", b =>
                 {
                     b.HasOne("FitnessPro.Models.FitnessUser", "FitnessUser")
-                        .WithMany()
+                        .WithMany("FitnessClasses")
                         .HasForeignKey("FitnessUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("FitnessUser");
@@ -431,9 +430,9 @@ namespace FitnessPro.Migrations
             modelBuilder.Entity("FitnessPro.Models.Trainer", b =>
                 {
                     b.HasOne("FitnessPro.Models.FitnessUser", "FitnessUser")
-                        .WithMany()
+                        .WithMany("Trainers")
                         .HasForeignKey("FitnessUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("FitnessUser");
@@ -488,6 +487,13 @@ namespace FitnessPro.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FitnessPro.Models.FitnessUser", b =>
+                {
+                    b.Navigation("FitnessClasses");
+
+                    b.Navigation("Trainers");
                 });
 #pragma warning restore 612, 618
         }

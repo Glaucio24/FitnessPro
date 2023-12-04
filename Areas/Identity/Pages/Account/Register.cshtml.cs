@@ -19,9 +19,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using FitnessPro.Services;
 
 namespace FitnessPro.Areas.Identity.Pages.Account
 {
+    [AllowAnonymous]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<FitnessUser> _signInManager;
@@ -29,21 +31,21 @@ namespace FitnessPro.Areas.Identity.Pages.Account
         private readonly IUserStore<FitnessUser> _userStore;
         private readonly IUserEmailStore<FitnessUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly IFitnessEmailSender _IFitnessEmailSender;
 
         public RegisterModel(
             UserManager<FitnessUser> userManager,
             IUserStore<FitnessUser> userStore,
             SignInManager<FitnessUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IFitnessEmailSender fitnessEmailSender)
         {
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
-            _emailSender = emailSender;
+            _IFitnessEmailSender = fitnessEmailSender;
         }
 
         /// <summary>
@@ -133,6 +135,7 @@ namespace FitnessPro.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
+                    
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -142,7 +145,7 @@ namespace FitnessPro.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    await _IFitnessEmailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)

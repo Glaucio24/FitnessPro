@@ -124,6 +124,8 @@ namespace FitnessPro.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FitnessUserId,FirstName,LastName,Certification,Experience")] Trainer trainer)
         {
+            //ModelState.Remove("FitnessUserId");
+
             if (ModelState.IsValid)
             {
                 _context.Add(trainer);

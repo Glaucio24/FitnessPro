@@ -73,7 +73,7 @@ namespace FitnessPro.Controllers
             var trainers = await _managmentService.GetUserTrainersAsync(fitnessUserId);
             var clients = await _managmentService.GetUserClientsAsync(fitnessUserId);
 
-            // Create a SelectListItems array with FirstName as the text and Certification as an additional info for Trainers
+            // Create a SelectListItems array with FirstName as the text and Certification as an additional information for Trainers
             var trainerItems = trainers.Select(t => new SelectListItem
             {
                 Value = t.Id.ToString(), // Assuming Id is used as the value
