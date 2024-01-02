@@ -8,6 +8,7 @@ using FitnessPro.ViewModel;
 using System.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace FitnessPro
@@ -24,7 +25,10 @@ namespace FitnessPro
                 options.UseNpgsql(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddIdentity<FitnessUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount =true)
+
+
+            builder.Services.AddIdentity<FitnessUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                  .AddDefaultTokenProviders()
 
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
@@ -37,10 +41,9 @@ namespace FitnessPro
             builder.Services.AddScoped<IGymManagmentService, GymManagmentService>();
             builder.Services.AddScoped<DataService>();
 
+            builder.Services.AddTransient<IFitnessEmailSender, EmailService>();
             //Register a preconfigured instance of the MailSetting
-
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
-            builder.Services.AddScoped<IFitnessEmailSender, EmailService>();
 
             var app = builder.Build();
             //Register our custom DataService class          

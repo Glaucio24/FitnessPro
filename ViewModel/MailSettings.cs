@@ -6,8 +6,8 @@ namespace FitnessPro.ViewModel
     {
         //configure and use smtp server from google 
 
-        public string? Mail { get; set; }
-        public string? DisplayNmae { get; set; }
+        public string? Email { get; set; }
+        public string? DisplayName { get; set; }
         public string? Password { get; set; }
         public string? Host {get;set;}
         public int Port { get; set; }

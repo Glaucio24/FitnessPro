@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FitnessPro.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231204185715_init")]
+    [Migration("20231230204911_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

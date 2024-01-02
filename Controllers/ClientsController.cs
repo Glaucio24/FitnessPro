@@ -15,10 +15,12 @@ namespace FitnessPro.Controllers
     public class ClientsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<FitnessUser> _userManager;
 
-        public ClientsController(ApplicationDbContext context)
+        public ClientsController(ApplicationDbContext context, UserManager<FitnessUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Clients
@@ -70,6 +72,9 @@ namespace FitnessPro.Controllers
             {
                 ModelState.Remove("FitnessUserId");
 
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                client.FitnessUserId = currentUser.Id; // Set the FitnessUserId to the current user's ID
+
                 _context.Add(client);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -92,6 +97,20 @@ namespace FitnessPro.Controllers
             {
                 return NotFound();
             }
+
+            //Allow only users with admin roles to access the edit action of any user
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (!User.IsInRole("Admin"))
+            {
+                if (client.FitnessUserId != currentUser.Id)
+                {
+                    // Unauthorized access to edit other user's client details
+                    return Forbid();
+                }
+            }
+
+
             ViewData["FitnessUserId"] = new SelectList(_context.Users, "Id", "Id", client.FitnessUserId);
             return View(client);
         }
